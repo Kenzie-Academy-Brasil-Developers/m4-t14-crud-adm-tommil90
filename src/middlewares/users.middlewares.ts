@@ -11,29 +11,24 @@ export const verifyEmailExistMiddleware = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const retrieveEmail = request.emailRetriever
-  const { email }: Pick<iUser, "email">= request.body;
+  const retrieveEmail = request.emailRetriever;
+  const { email }: Pick<iUser, "email"> = request.body;
 
   const queryString: string = `
     SELECT
-      "email" 
+      'email' 
     FROM
       users u;
     `;
 
-  const queryResult: QueryResult = await client.query(
-    queryString
-  );
+  const queryResult: QueryResult = await client.query(queryString);
   const emails = queryResult.rows;
 
   let emailExists: boolean = emails.some((el) => el.email === email);
 
-
-  if (request.method === "PATCH"){
-      
-      const filteredList = emails.filter(el => el.email !== retrieveEmail)
-      emailExists = filteredList.some(el => el.email === email);
-
+  if (request.method === "PATCH") {
+    const filteredList = emails.filter((el) => el.email !== retrieveEmail);
+    emailExists = filteredList.some((el) => el.email === email);
   }
 
   if (emailExists) {
@@ -62,9 +57,8 @@ export const validateTokenMiddleware = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-
   const authToken = request.headers.authorization;
-  
+
   if (!authToken || authToken.length < 7) {
     throw new AppError("Missing authorization token", 401);
   }
@@ -75,19 +69,18 @@ export const validateTokenMiddleware = async (
     String(process.env.SECRET_KEY),
     (error: any, decoded: any) => {
       if (error) {
-        throw new AppError(error.message, 401);   
+        throw new AppError(error.message, 401);
       }
-       
+
       request.user = {
         id: parseInt(decoded.sub),
-        admin: decoded.admin
-      }
-      
+        admin: decoded.admin,
+      };
+
       return next();
     }
   );
 };
-
 
 export const verifyIdUserMiddleWare = async (
   request: Request,
@@ -95,10 +88,10 @@ export const verifyIdUserMiddleWare = async (
   next: NextFunction
 ): Promise<Response | void> => {
   const id: number = Number(request.params.id);
-  const idTokenUser = request.user.id
+  const idTokenUser = request.user.id;
 
-  if(id !== idTokenUser){
-    throw new AppError("id conflicts", 400)
+  if (id !== idTokenUser) {
+    throw new AppError("id conflicts", 400);
   }
 
   const queryString: string = `
@@ -118,8 +111,8 @@ export const verifyIdUserMiddleWare = async (
     queryConfig
   );
 
-  if(request.method === "PATCH"){
-    request.emailRetriever = queryResult.rows[0].email
+  if (request.method === "PATCH") {
+    request.emailRetriever = queryResult.rows[0].email;
   }
 
   if (queryResult.rowCount > 0) {
@@ -131,20 +124,16 @@ export const verifyIdUserMiddleWare = async (
   });
 };
 
-
 export const verifyUserIsAdmin = async (
   request: Request,
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
- 
+  const authtenticatedAdmin = request.user.admin;
 
-  const authtenticatedAdmin = request.user.admin
-
-  if(authtenticatedAdmin === false){
-    throw new AppError('User don`t have permission', 403)
+  if (authtenticatedAdmin === false) {
+    throw new AppError("User don`t have permission", 403);
   }
 
-  return next()
+  return next();
 };
-

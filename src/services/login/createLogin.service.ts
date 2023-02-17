@@ -3,9 +3,11 @@ import { sign } from "jsonwebtoken";
 import { QueryConfig, QueryResult } from "pg";
 import { client } from "../../database";
 import { AppError } from "../../error";
-import { iUser, tLogin } from "../../interfaces/users.interfaces"
+import { iUser, tLogin } from "../../interfaces/users.interfaces";
 
-export const createLoginService = async (payload: tLogin): Promise<{token: string}> => {
+export const createLoginService = async (
+  payload: tLogin
+): Promise<{ token: string }> => {
   const queryStringUserExist: string = `
         SELECT
             *
@@ -27,11 +29,8 @@ export const createLoginService = async (payload: tLogin): Promise<{token: strin
   if (queryResultUserExists.rowCount === 0) {
     throw new AppError("Invalid email or password!", 401);
   }
-  const user = queryResultUserExists.rows[0]
-  const pwdMatch: boolean = await compare(
-    payload.password,
-    user.password
-  );
+  const user = queryResultUserExists.rows[0];
+  const pwdMatch: boolean = await compare(payload.password, user.password);
 
   if (!pwdMatch) {
     throw new AppError("Invalid email or password!", 401);

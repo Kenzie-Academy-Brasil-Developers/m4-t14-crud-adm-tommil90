@@ -10,9 +10,9 @@ import { createUserReturnSchema } from "../../schemas/user.schema";
 import { QueryConfig } from "pg";
 
 export const updateUserService = async (
-  userData: tUserUpdateRequest, id: number
+  userData: tUserUpdateRequest,
+  id: number
 ): Promise<tUserWithoutPassword> => {
-
   const validatedBody = userData;
 
   const queryString: string = format(
@@ -30,8 +30,8 @@ export const updateUserService = async (
 
   const queryConfig: QueryConfig = {
     text: queryString,
-    values: [id] 
-  }
+    values: [id],
+  };
 
   const queryResult: tUserResult = await client.query(queryConfig);
 

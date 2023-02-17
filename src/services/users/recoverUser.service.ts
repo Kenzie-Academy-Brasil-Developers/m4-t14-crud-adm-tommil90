@@ -3,7 +3,9 @@ import { client } from "../../database";
 import { createUserReturnSchema } from "../../schemas/user.schema";
 import { QueryConfig, QueryResult } from "pg";
 
-export const recoverUserService = async (userId: number): Promise<tUserWithoutPassword> => {
+export const recoverUserService = async (
+  userId: number
+): Promise<tUserWithoutPassword> => {
   const id = userId;
 
   const queryString = `
@@ -23,5 +25,5 @@ export const recoverUserService = async (userId: number): Promise<tUserWithoutPa
 
   const queryResult: QueryResult<iUser> = await client.query(queryConfig);
 
-  return createUserReturnSchema.parse(queryResult.rows[0])
+  return createUserReturnSchema.parse(queryResult.rows[0]);
 };

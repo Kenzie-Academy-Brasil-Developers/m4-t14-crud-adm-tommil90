@@ -24,13 +24,13 @@ export const loginUserSchema = userSchema.pick({
 export const usersList = createUserReturnSchema.array();
 
 export const updateUserSchema = userSchema
-.omit({
+  .omit({
     id: true,
     admin: true,
-    active: true
-})
-.partial({
+    active: true,
+  })
+  .partial({
     name: true,
     password: true,
-    email: true
-})
+    email: true,
+  });

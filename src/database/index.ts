@@ -1,7 +1,4 @@
+import startDatabase from "./conection";
+import client from "./config";
 
-
-import startDatabase from './conection'
-import client from './config'
-
-
-export { client, startDatabase }
+export { client, startDatabase };
