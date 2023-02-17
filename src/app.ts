@@ -1,5 +1,5 @@
 import "express-async-errors"
-import express, { Application } from 'express'
+import express, { Application } from "express"
 import { errorHandler } from './error'
 import { loginRoutes } from "./routes/login.routes"
 import { userRoutes } from "./routes/users.routes"
