@@ -1,4 +1,4 @@
-import { iUser } from "../../interfaces/users.interfaces";
+
 import * as express from "express";
 
 declare global {

@@ -16,15 +16,16 @@ export const verifyEmailExistMiddleware = async (
 
   const queryString: string = `
     SELECT
-      'email' 
+      email 
     FROM
       users u;
     `;
 
-  const queryResult: QueryResult = await client.query(queryString);
+  const queryResult: QueryResult<Pick<iUser, "email">> = await client.query(queryString);
   const emails = queryResult.rows;
 
   let emailExists: boolean = emails.some((el) => el.email === email);
+ 
 
   if (request.method === "PATCH") {
     const filteredList = emails.filter((el) => el.email !== retrieveEmail);
@@ -90,9 +91,6 @@ export const verifyIdUserMiddleWare = async (
   const id: number = Number(request.params.id);
   const idTokenUser = request.user.id;
 
-  if (id !== idTokenUser) {
-    throw new AppError("id conflicts", 400);
-  }
 
   const queryString: string = `
         SELECT
@@ -111,17 +109,21 @@ export const verifyIdUserMiddleWare = async (
     queryConfig
   );
 
+  if (queryResult.rowCount === 0) {
+    return response.status(404).json({
+      message: "Developer not exists!",
+    });
+  }
+
+  if (id !== idTokenUser) {
+    throw new AppError("id conflicts", 400);
+  }
+
   if (request.method === "PATCH") {
     request.emailRetriever = queryResult.rows[0].email;
   }
 
-  if (queryResult.rowCount > 0) {
-    return next();
-  }
-
-  return response.status(404).json({
-    message: "Developer not exists!",
-  });
+  return next()
 };
 
 export const verifyUserIsAdmin = async (

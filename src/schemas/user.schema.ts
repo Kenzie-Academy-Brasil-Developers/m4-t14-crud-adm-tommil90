@@ -12,6 +12,8 @@ export const userSchema = z.object({
 export const createUserSchema = userSchema.omit({
   id: true,
   active: true,
+}).partial({
+  admin:true
 });
 
 export const createUserReturnSchema = userSchema.omit({ password: true });
