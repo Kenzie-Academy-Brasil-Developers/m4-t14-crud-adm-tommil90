@@ -11,7 +11,7 @@ export const verifyEmailExistMiddleware = async (
   response: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const retrieveEmail = request.email
+  const retrieveEmail = request.emailRetriever
   const { email }: Pick<iUser, "email">= request.body;
 
   const queryString: string = `
@@ -75,14 +75,14 @@ export const validateTokenMiddleware = async (
     String(process.env.SECRET_KEY),
     (error: any, decoded: any) => {
       if (error) {
-        throw new AppError(error.message, 401);
+        throw new AppError(error.message, 401);   
       }
-
+       
       request.user = {
-        id: parseInt(decoded.sub)
-
+        id: parseInt(decoded.sub),
+        admin: decoded.admin
       }
-
+      
       return next();
     }
   );
@@ -95,6 +95,11 @@ export const verifyIdUserMiddleWare = async (
   next: NextFunction
 ): Promise<Response | void> => {
   const id: number = Number(request.params.id);
+  const idTokenUser = request.user.id
+
+  if(id !== idTokenUser){
+    throw new AppError("id conflicts", 400)
+  }
 
   const queryString: string = `
         SELECT
@@ -114,7 +119,7 @@ export const verifyIdUserMiddleWare = async (
   );
 
   if(request.method === "PATCH"){
-    request.email = queryResult.rows[0].email
+    request.emailRetriever = queryResult.rows[0].email
   }
 
   if (queryResult.rowCount > 0) {
@@ -127,6 +132,19 @@ export const verifyIdUserMiddleWare = async (
 };
 
 
+export const verifyUserIsAdmin = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+ 
 
+  const authtenticatedAdmin = request.user.admin
 
+  if(authtenticatedAdmin === false){
+    throw new AppError('User don`t have permission', 403)
+  }
+
+  return next()
+};
 

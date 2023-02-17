@@ -7,7 +7,6 @@ import {
 import { client } from "../../database";
 import format from "pg-format";
 import { createUserReturnSchema } from "../../schemas/user.schema";
-import { hash } from "bcryptjs";
 import { QueryConfig } from "pg";
 
 export const updateUserService = async (

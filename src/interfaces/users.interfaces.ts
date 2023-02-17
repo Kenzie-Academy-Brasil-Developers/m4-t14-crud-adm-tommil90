@@ -16,3 +16,4 @@ export type tUsersListResult = QueryResult<tUserWithoutPassword[]>
 export type tLogin = z.infer<typeof loginUserSchema>;
 
 export type tUserUpdateRequest = z.infer<typeof updateUserSchema>
+

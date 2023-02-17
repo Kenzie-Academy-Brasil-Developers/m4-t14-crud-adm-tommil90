@@ -1,17 +1,25 @@
 import { Router } from "express"
-import { createUsersController, retrieveUsersListController, updateUserController, userLoginController } from "../controllers/users.controllers" 
-import { validateBodyMiddleware, validateTokenMiddleware, verifyEmailExistMiddleware, verifyIdUserMiddleWare } from "../middlewares/users.middlewares"
+import { createUsersController, recoverUserController, retrieveUsersListController, softDeleteController, updateUserController, userLoginController, userProfileController } from "../controllers/users.controllers" 
+import { validateBodyMiddleware, validateTokenMiddleware, verifyEmailExistMiddleware, verifyIdUserMiddleWare, verifyUserIsAdmin } from "../middlewares/users.middlewares"
 import { createUserSchema, loginUserSchema, updateUserSchema } from "../schemas/user.schema"
 
 
-export const userRouter: Router = Router()
+export const userRoutes: Router = Router()
 
 
 
-userRouter.post("", verifyEmailExistMiddleware, validateBodyMiddleware(createUserSchema), createUsersController)
+userRoutes.post("", verifyEmailExistMiddleware, validateBodyMiddleware(createUserSchema), createUsersController)
 
-userRouter.post("/login",validateBodyMiddleware(loginUserSchema), userLoginController)
+userRoutes.post("/login",validateBodyMiddleware(loginUserSchema), userLoginController)
 
-userRouter.get("", validateTokenMiddleware, retrieveUsersListController)
+userRoutes.get("", validateTokenMiddleware, verifyUserIsAdmin, retrieveUsersListController)
 
-userRouter.patch("/:id", validateTokenMiddleware, verifyIdUserMiddleWare, verifyEmailExistMiddleware, validateBodyMiddleware(updateUserSchema), updateUserController)
+userRoutes.get("/profile", validateTokenMiddleware, userProfileController)
+
+userRoutes.patch("/:id", validateTokenMiddleware, verifyIdUserMiddleWare, verifyEmailExistMiddleware, validateBodyMiddleware(updateUserSchema), updateUserController)
+
+userRoutes.delete("/:id", validateTokenMiddleware, verifyIdUserMiddleWare, softDeleteController)
+
+userRoutes.put("/:id/recover", validateTokenMiddleware, verifyIdUserMiddleWare, recoverUserController)
+
+

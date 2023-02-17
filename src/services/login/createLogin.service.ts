@@ -38,7 +38,7 @@ export const createLoginService = async (payload: tLogin): Promise<{token: strin
   }
 
   const token: string = sign(
-    { email: user.email },
+    { admin: user.admin },
     String(process.env.SECRET_KEY),
     { expiresIn: "24h", subject: String(user.id) }
   );
