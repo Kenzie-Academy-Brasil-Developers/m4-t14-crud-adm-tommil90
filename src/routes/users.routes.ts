@@ -65,5 +65,6 @@ userRoutes.put(
   "/:id/recover",
   validateTokenMiddleware,
   verifyIdUserMiddleWare,
+  verifyUserIsAdmin,
   recoverUserController
 );

@@ -115,12 +115,20 @@ export const verifyIdUserMiddleWare = async (
     });
   }
 
-  if (id !== idTokenUser) {
-    throw new AppError("id conflicts", 400);
+  if (request.method === "PUT") {
+    return next();
   }
 
   if (request.method === "PATCH") {
     request.emailRetriever = queryResult.rows[0].email;
+  }
+
+  if ((request.method === "PATCH" || request.method === "DELETE") && request.user.admin === true) {
+    return next();
+  }
+
+  if (id !== idTokenUser) {
+    throw new AppError("Not permission for update or delete other users", 403);
   }
 
   return next()
